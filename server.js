@@ -26,6 +26,45 @@ const db = mysql.createConnection({
 // add employee
 // add role
 
+function userSelection(){
+    inquirer.prompt([
+        {
+            type: 'list',
+            message: 'Please make a selection from the following options:',
+            name: 'userAnswers',
+            choices: [
+                new inquirer.Separator(),
+                'View all Employees',
+                'View all Roles',
+                'View all Departments',
+                new inquirer.Separator(),
+                'Update an Employee',
+                'Update a Role',
+                new inquirer.Separator(),
+                'Add a New Employee',
+                'Add a New Department',
+                'Add a New Role',
+                'Add a New Manager'
+            ]
+
+        }
+    ])
+    // then use else/if conditional based on userAnswers 
+    .then(({ userAnswers }) => {
+        if (userAnswers === 'View all Employees') {
+            const sqlUserSelect = `SELECT * FROM employee;`;
+
+            // output query results
+            databaseOutput(sqlUserSelect);
+        }
+        else if (userAnswers === 'View all Roles') {
+            const sqlUserSelect = `SELECT * FROM roles;`;
+
+            databaseOutput(sqlUserSelect);
+        }
+    })
+}
+
 
 
 
