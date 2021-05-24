@@ -84,6 +84,40 @@ app.delete("/api/employee/:id", (req, res) => {
 //   console.log(result);
 // });
 
+// CREATE new employee
+// app.post("/api/employee", ({ body }, res) => {
+//   const errors = inputCheck(
+//     body,
+//     "first_name",
+//     "last_name",
+//     "role_id",
+//     "manager_id"
+//   );
+//   if (errors) {
+//     res.status(400).json({ error: errors });
+//     return;
+//   }
+//   const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+//         VALUES (?,?,?,?)`;
+//   const params = [
+//     body.first_name,
+//     body.last_name,
+//     body.role_id,
+//     body.manager_id,
+//   ];
+
+//   db.query(sql, params, (err, result) => {
+//     if (err) {
+//       res.status(400).json({ error: err.message });
+//       return;
+//     }
+//     res.json({
+//       message: "success",
+//       data: body,
+//     });
+//   });
+// });
+
 // GET all employees
 app.get("/api/employee", (req, res) => {
   const sql = `SELECT * FROM employee`;
