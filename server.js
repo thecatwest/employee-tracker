@@ -1,6 +1,8 @@
 // import mysql2
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
+// const Connection = require("mysql2/typings/mysql/lib/Connection");
+const { response } = require("express");
 
 // const database = require("./db/db.sql");
 
@@ -282,5 +284,32 @@ function userSelection() {
             databaseOutput(sqlUserSelect);
           });
       }
+    })
+    .catch((error) => {
+      console.log(`An Error has occurred: ${error}`);
     });
-}
+};
+
+function databaseOutput(userOutput) {
+    connection.promise().query(userOutput)
+    .then( ([ result ]) => {
+        console.log('new inquirer.Separator()');
+        console.log(result);
+        console.log('new inquirer.Separator()');
+        // prompt user to return to menu
+        inquirer.prompt([
+            {
+                type: 'confirm',
+                message: 'Would you like to return to the main menu?',
+                name: menuReturn
+            }
+        ])
+        .then((response) => {
+            if(response.menuReturn){userSelection()}
+            else {console.log('Thank you for using the Hogwarts School of Witchcraft and Wizardry Employee Tracker. Goodbye!');}
+        })
+    })
+    .catch(console.log);
+};
+
+userSelection();
