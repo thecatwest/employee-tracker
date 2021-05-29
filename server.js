@@ -1,9 +1,8 @@
 // import mysql2
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
-// const Connection = require("mysql2/typings/mysql/lib/Connection");
 const { response } = require("express");
-
+const cTable = require('console.table');
 // const database = require("./db/db.sql");
 
 // connect application to MySQL database
@@ -68,7 +67,7 @@ function userSelection() {
       // if user selects "view all departments"
       else if (userAnswers === "View all Departments") {
         // set variable with SQL to return all departments
-        const sqlUserSelect = `SELECT * FROM departments;`;
+        const sqlUserSelect = `SELECT * FROM department;`;
 
         databaseOutput(sqlUserSelect);
       }
@@ -155,18 +154,18 @@ function userSelection() {
             {
               type: "input",
               message: "Please enter employee's FIRST NAME:",
-              name: firstName,
+              name: "firstName",
             },
             {
               type: "input",
               message: "Please enter employee's LAST NAME:",
-              name: lastName,
+              name: "lastName",
             },
             {
               type: "list",
               message:
                 'Please select a MANAGER for this employee. If the employee does not have an assigned manager, select "none":',
-              name: manId,
+              name: "manId",
               choices: ["Albus Dumbledore", "Minerva McGonagall", "None"],
               filter: function (option) {
                 if (option === "Albus Dumbledore") {
@@ -183,7 +182,7 @@ function userSelection() {
             {
               type: "list",
               message: "Please select a ROLE for the employee:",
-              name: newRole,
+              name: "newRole",
               choices: [
                 "Caretaker",
                 "Grounds Keeper",
@@ -220,7 +219,7 @@ function userSelection() {
           ])
           .then(({ firstName, lastName, newRole, manId }) => {
             const sqlUserSelect = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-        VALUES (${firstName}, ${lastName}, ${newRole}, ${manId});`;
+        VALUES ('${firstName}', '${lastName}', '${newRole}', '${manId}');`;
 
             databaseOutput(sqlUserSelect);
           });
@@ -234,12 +233,12 @@ function userSelection() {
             {
               type: "input",
               message: "Please enter a DEPARTMENT NAME:",
-              name: newDept,
+              name: "newDept",
             },
           ])
           .then(({ newDept }) => {
             const sqlUserSelect = `INSERT INTO department (department_name)
-        VALUES (${newDept});`;
+        VALUES ('${newDept}');`;
 
             databaseOutput(sqlUserSelect);
           });
@@ -252,17 +251,17 @@ function userSelection() {
             {
               type: "input",
               message: "Please enter a ROLE TITLE:",
-              name: newTitle,
+              name: "newTitle",
             },
             {
               type: "input",
               message: "Please enter a SALARY. Use two decimal places:",
-              name: newSalary,
+              name: "newSalary",
             },
             {
               type: "list",
               message: "Please select a DEPARTMENT:",
-              name: newDept,
+              name: "newDept",
               choices: ["Management", "Facilities", "Teaching"],
               filter: function (option) {
                 if (option === "Management") {
@@ -279,7 +278,7 @@ function userSelection() {
           ])
           .then(({ newTitle, newSalary, newDept }) => {
             const sqlUserSelect = `INSERT INTO roles (title, salary, department_id)
-        VALUES(${newTitle}, ${newSalary}, ${newDept});`;
+        VALUES('${newTitle}', '${newSalary}', '${newDept}');`;
 
             databaseOutput(sqlUserSelect);
           });
@@ -288,28 +287,36 @@ function userSelection() {
     .catch((error) => {
       console.log(`An Error has occurred: ${error}`);
     });
-};
+}
 
 function databaseOutput(userOutput) {
-    connection.promise().query(userOutput)
-    .then( ([ result ]) => {
-        console.log('new inquirer.Separator()');
-        console.log(result);
-        console.log('new inquirer.Separator()');
-        // prompt user to return to menu
-        inquirer.prompt([
-            {
-                type: 'confirm',
-                message: 'Would you like to return to the main menu?',
-                name: menuReturn
-            }
+  db
+    .promise()
+    .query(userOutput)
+    .then(([result]) => {
+      console.log("-----------------------------------");
+      console.table(result);
+      console.log("-----------------------------------");
+      // prompt user to return to menu
+      inquirer
+        .prompt([
+          {
+            type: "confirm",
+            message: "Would you like to return to the main menu?",
+            name: "menuReturn",
+          },
         ])
         .then((response) => {
-            if(response.menuReturn){userSelection()}
-            else {console.log('Thank you for using the Hogwarts School of Witchcraft and Wizardry Employee Tracker. Goodbye!');}
-        })
+          if (response.menuReturn) {
+            userSelection();
+          } else {
+            console.log(
+              "Thank you for using the Hogwarts School of Witchcraft and Wizardry Employee Tracker. Goodbye!"
+            );
+          }
+        });
     })
     .catch(console.log);
-};
+}
 
 userSelection();
